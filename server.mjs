@@ -1,17 +1,18 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import db from './db/conn.mjs'
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 1991;
 
 app.get('/', (req,res) => {
     res.send(
-        'This is the root for my server'
+        'Weather Sample'
     )
 })
-
+//testing//
 app.listen(PORT, () => {
     console.log('server is listening')
 })
