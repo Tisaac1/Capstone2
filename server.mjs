@@ -6,6 +6,7 @@ import db from './db/conn.mjs'
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 1991;
+api key = YH5hXE5XEWrZOADpUJASEA06gtoYsBj4
 
 app.get('/', (req,res) => {
     res.send(
