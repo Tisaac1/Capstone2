@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const weatherday = new mongoose.Schema({
+const fiveday = new mongoose.Schema({
    day: {
       type: String,
       required: true
@@ -8,6 +8,6 @@ const weatherday = new mongoose.Schema({
   Accuratedate: Boolean
 });
 
-const weather = mongoose.model('Day', weatherday);
+const five = mongoose.model('day', fiveday);
 
-export default weather;
+export default five;
