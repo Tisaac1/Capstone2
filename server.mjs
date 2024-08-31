@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import db from './db/conn.mjs';
 import bodyParser from 'body-parser';
 import jsxViewEngine from 'jsx-view-engine';
-
+import methodOverride from 'method-override'
 import weatherRoute from './controllers/weatherday.mjs';
 import fiveRoute from './controllers/fiveday.mjs';
 
@@ -13,21 +13,30 @@ const app = express();
 const PORT = process.env.PORT || 1991;
 const apikey = 'YH5hXE5XEWrZOADpUJASEA06gtoYsBj4'
 
-app.use(bodyParser.json()); // Ensure you use body-parser middleware if handling JSON payloads
+app.set('view engine', 'jsx');
+app.set ('views', './views');
+app.engine('jsx', jsxViewEngine());
 
-// Route handlers
-app.use('/weather', weatherRoute); // Mount weather routes
-app.use('/five-day', fiveRoute);   // Mount five-day routes
+app.use(bodyParser.json()); 
+
+app.use(express.json());
+
+app.use(express.urlencoded({extended: false}));
+
+app.use(methodOverride('_method'));
+
+
+app.use('/weather', weatherRoute); 
 
 app.get('/', (req, res) => {
-    // Handle GET request logic here
+   
     res.json({ message: 'Welcome to the Weather API!' });
 });
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
+    console.error(err);
+    res.status(500).send('Bugs in server');
 });
 
 app.listen(PORT, () => {
