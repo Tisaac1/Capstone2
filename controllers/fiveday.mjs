@@ -6,7 +6,6 @@ import five from '../models/fiveday.mjs';
 
 
 
-// Retrieve all fiveday entries
 router.get('/', async (req, res) => {
     try {
         const foundfiveday = await five.find({});
@@ -17,12 +16,12 @@ router.get('/', async (req, res) => {
 });
 
 // Render new fiveday form
-router.get('/new', (req, res) => {
+router.get('/', (req, res) => {
     res.render('fiveday/new');
 });
 
 // Delete a specific fiveday entry
-router.delete('/:id', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
         const deletedfive = await five.findByIdAndDelete(req.params.id);
         res.status(200).redirect('/fiveday');
@@ -31,8 +30,8 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// Update a specific fiveday entry
-router.put('/:id', async (req, res) => {
+
+router.put('/', async (req, res) => {
     req.body.weather = req.body.weather === 'on';
 
     try {
@@ -63,7 +62,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get("/:id/edit", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const foundfive = await five.findById(req.params.id);
         res.status(200).render('fiveday/edit', { five: foundfive });
@@ -73,7 +72,7 @@ router.get("/:id/edit", async (req, res) => {
 });
 
 
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const foundfive = await five.findById(req.params.id);
         res.render('fiveday/show', { five: foundfive });

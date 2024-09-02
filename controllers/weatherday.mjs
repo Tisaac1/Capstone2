@@ -16,8 +16,8 @@ router.get('/frontend/src/pages/WelcomePage', async (req, res) => {
 });
 
 
-router.get('/new', (req, res) => {
-    res.render('weatherday/new');
+router.get('/frontend/src/pages/Fiveday', (req, res) => {
+    res.render('/frontend/src/pages/Fiveday');
 });
 
 
@@ -31,7 +31,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     req.body.weather = req.body.weather === 'on';
 
     try {
@@ -67,17 +67,17 @@ router.post('/', async (req, res) => {
 });
 
 
-router.get("/:id/edit", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const foundWeather = await Weather.findById(req.params.id);
-        res.status(200).render('weatherday/edit', { Weather: foundWeather });
+        res.status(200).render('localhost:1991/Fiveday', { Weather: foundWeather });
     } catch (e) {
         res.status(400).send({ error });
     }
 });
 
 
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const foundWeather = await Weather.findById(req.params.id);
         res.render('weatherday/show', { Weather: foundWeather });
