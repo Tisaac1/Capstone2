@@ -1,10 +1,11 @@
 import express from 'express';
 import Weather from '../models/weatherday.mjs'; 
-
 const router = express.Router();
+import connectdb from '../db/conn.mjs';
 
+connectdb();
 
-router.post('/weather', async (req, res) => {
+router.post('/weatherday', async (req, res) => {
     const { lat, lon } = req.body;
     try {
         const weatherData = await Weather.getWeatherData(lat, lon);
@@ -24,7 +25,7 @@ router.post('/weather', async (req, res) => {
     }
 });
 
-router.get('/weather/:id', async (req, res) => {
+router.get('/weatherday/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const weatherData = await Weather.findById(id);
@@ -39,8 +40,7 @@ router.get('/weather/:id', async (req, res) => {
     }
 });
 
-// Update: Update existing weather data in MongoDB
-router.put('/weather/:id', async (req, res) => {
+router.put('/weatherday/:id', async (req, res) => {
     const { id } = req.params;
     const { lat, lon } = req.body;
     try {
@@ -65,7 +65,7 @@ router.put('/weather/:id', async (req, res) => {
 });
 
 
-router.delete('/weather/:id', async (req, res) => {
+router.delete('/weatherday/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const deletedWeather = await Weather.findByIdAndDelete(id);
