@@ -3,46 +3,79 @@ import Weather from '../models/weatherday.mjs';
 
 const router = express.Router();
 
-router.post('/:id/weatherday', async (req, res) => {
+
+router.post('/weather', async (req, res) => {
     const { lat, lon } = req.body;
     try {
         const weatherData = await Weather.getWeatherData(lat, lon);
-        res.json({
+        const newWeather = new Weather({
             city: weatherData.name,
             currentTemp: weatherData.main.temp,
             minTemp: weatherData.main.temp_min,
-            maxTemp: weatherData.main.temp_max
+            maxTemp: weatherData.main.temp_max,
+            lat,
+            lon
         });
+        await newWeather.save();
+        res.status(201).json(newWeather);
+    } catch (error) {
+        console.error("Error creating weather data:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
+router.get('/weather/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const weatherData = await Weather.findById(id);
+        if (weatherData) {
+            res.json(weatherData);
+        } else {
+            res.status(404).send({ error: "Weather data not found" });
+        }
     } catch (error) {
         console.error("Error fetching weather data:", error);
         res.status(500).send({ error: error.message });
     }
 });
 
-// router.post('/weatherMongo', async (req, res) => {
-//     const { lat, lon } = req.body;
-//     try {
-//         const weatherData = await Weather.getWeatherData(lat, lon);
-//         await Weather.saveWeatherDataToMongo(lat, weatherData);
-//         res.json({
-//             city: weatherData.name,
-//             currentTemp: weatherData.main.temp,
-//             minTemp: weatherData.main.temp_min,
-//             maxTemp: weatherData.main.temp_max
-//         });
-//     } catch (error) {
-//         console.error("Error processing weather data:", error);
-//         res.status(500).send({ error: error.message });
-//     }
-// });
-
-router.get('/', async (req, res) => {
-    const zipCode = req.query.id;
+// Update: Update existing weather data in MongoDB
+router.put('/weather/:id', async (req, res) => {
+    const { id } = req.params;
+    const { lat, lon } = req.body;
     try {
-        const weatherData = await Weather.findById(zipCode);
-        res.json(weatherData);
+        const weatherData = await Weather.getWeatherData(lat, lon);
+        const updatedWeather = await Weather.findByIdAndUpdate(id, {
+            city: weatherData.name,
+            currentTemp: weatherData.main.temp,
+            minTemp: weatherData.main.temp_min,
+            maxTemp: weatherData.main.temp_max,
+            lat,
+            lon
+        }, { new: true }); 
+        if (updatedWeather) {
+            res.json(updatedWeather);
+        } else {
+            res.status(404).send({ error: "Weather data not found" });
+        }
     } catch (error) {
-        console.error("Error fetching weather data from MongoDB:", error);
+        console.error("Error updating weather data:", error);
+        res.status(500).send({ error: error.message });
+    }
+});
+
+
+router.delete('/weather/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deletedWeather = await Weather.findByIdAndDelete(id);
+        if (deletedWeather) {
+            res.json({ message: "Weather data deleted successfully" });
+        } else {
+            res.status(404).send({ error: "Weather data not found" });
+        }
+    } catch (error) {
+        console.error("Error deleting weather data:", error);
         res.status(500).send({ error: error.message });
     }
 });
