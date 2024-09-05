@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
+//my .env file did not transfer over
+//PORT = 1991
+//DATABASE_URI=mongodb://localhost:27017/weatherdb
+
 dotenv.config();
 
 const mongoURI = process.env.MONGO_URI;
