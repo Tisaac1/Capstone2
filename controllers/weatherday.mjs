@@ -1,19 +1,33 @@
+// weatherday.mjs
 import express from 'express';
-import Weather from '../models/weatherday.mjs'; 
+import axios from 'axios';
+import Weather from '../models/weatherday.mjs'; // Update path as needed
 const router = express.Router();
-import connectdb from '../db/conn.mjs';
 
-connectdb();
+const API_KEY = 'YH5hXE5XEWrZOADpUJASEA06gtoYsBj4';
+const BASE_URL = 'http://dataservice.accuweather.com/locations/v1/cities/geoposition/search';
 
-router.post('/weatherday', async (req, res) => {
+const getWeatherData = async (lat, lon) => {
+    try {
+        const response = await axios.get(BASE_URL, {
+            params: {
+                apikey: API_KEY,
+                q: `${lat},${lon}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Error fetching weather data from AccuWeather API');
+    }
+};
+
+router.post('/', async (req, res) => {
     const { lat, lon } = req.body;
     try {
-        const weatherData = await Weather.getWeatherData(lat, lon);
+        const weatherData = await getWeatherData(lat, lon);
         const newWeather = new Weather({
-            city: weatherData.name,
-            currentTemp: weatherData.main.temp,
-            minTemp: weatherData.main.temp_min,
-            maxTemp: weatherData.main.temp_max,
+            city: weatherData.LocalizedName,
+            currentTemp: weatherData.Temperature.Metric.Value,
             lat,
             lon
         });
@@ -44,15 +58,13 @@ router.put('/weatherday/:id', async (req, res) => {
     const { id } = req.params;
     const { lat, lon } = req.body;
     try {
-        const weatherData = await Weather.getWeatherData(lat, lon);
+        const weatherData = await getWeatherData(lat, lon);
         const updatedWeather = await Weather.findByIdAndUpdate(id, {
-            city: weatherData.name,
-            currentTemp: weatherData.main.temp,
-            minTemp: weatherData.main.temp_min,
-            maxTemp: weatherData.main.temp_max,
+            city: weatherData.LocalizedName,
+            currentTemp: weatherData.Temperature.Metric.Value,
             lat,
             lon
-        }, { new: true }); 
+        }, { new: true });
         if (updatedWeather) {
             res.json(updatedWeather);
         } else {
@@ -63,7 +75,6 @@ router.put('/weatherday/:id', async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
-
 
 router.delete('/weatherday/:id', async (req, res) => {
     const { id } = req.params;
