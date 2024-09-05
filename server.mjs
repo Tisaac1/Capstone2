@@ -16,13 +16,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 
+
+import axios from 'axios';
+
 connectdb();
 
 app.use('/weatherday', weatherRoute);
 
 app.get('/', (req, res) => {
   res.send(
-      `<div> Weather five day Route <br/><a href='/weatherday'>Weather</a>
+      `<
+    <div> Weather five day Route <br/><a href='/weatherday'>Weather</a></div>
+      
+      
+  
 
       </div>`
       
